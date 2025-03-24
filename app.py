@@ -14,28 +14,27 @@ def obtener_datos(tickers):
     data = []
     for ticker in tickers:
         try:
-            stock = yf.Ticker(ticker)
-            hist = stock.history(period="300d")
-            info = stock.info
-            if len(hist) >= 200:
-                cambio_dia = (hist["Close"][-1] - hist["Open"][-1]) / hist["Open"][-1] * 100
-                cambio_semana = (hist["Close"][-1] - hist["Close"][-6]) / hist["Close"][-6] * 100
-                cambio_ytd = (hist["Close"][-1] - hist["Close"][0]) / hist["Close"][0] * 100
-                vol_diario = hist["Volume"][-1]
-                vol_media_70 = hist["Volume"].tail(70).mean()
-                dif_vol = ((vol_diario - vol_media_70) / vol_media_70) * 100
-                
-    sector = info.get("sector", "")
-    if ".MC" in ticker:
-        mercado = "España"
-    elif ticker.endswith((".PA", ".DE", ".MI", ".AS", ".ST", ".L", ".SW")):
-        mercado = "EuroStoxx"
-    elif ticker in {tickers_etf}:
-        mercado = "ETF"
-    else:
-        mercado = "NYSE"
+        stock = yf.Ticker(ticker)
+        hist = stock.history(period="300d")
+        info = stock.info
+        sector = info.get("sector", "")
+        if ".MC" in ticker:
+            mercado = "España"
+        elif ticker.endswith((".PA", ".DE", ".MI", ".AS", ".ST", ".L", ".SW")):
+            mercado = "EuroStoxx"
+        elif ticker in {tickers_etf}:
+            mercado = "ETF"
+        else:
+            mercado = "NYSE"
 
-                data.append({
+        if len(hist) >= 200:
+            cambio_dia = (hist["Close"][-1] - hist["Open"][-1]) / hist["Open"][-1] * 100
+            cambio_semana = (hist["Close"][-1] - hist["Close"][-6]) / hist["Close"][-6] * 100
+            cambio_ytd = (hist["Close"][-1] - hist["Close"][0]) / hist["Close"][0] * 100
+            vol_diario = hist["Volume"][-1]
+            vol_media_70 = hist["Volume"].tail(70).mean()
+            dif_vol = ((vol_diario - vol_media_70) / vol_media_70) * 100
+            data.append({
                     "Ticker": ticker,
                     "Nombre": info.get("shortName", ""),
                     "Sector": sector,
@@ -47,6 +46,8 @@ def obtener_datos(tickers):
                     "Volumen Medio (70)": int(vol_media_70),
                     "Diferencia Volumen (%)": round(dif_vol, 2)
                 })
+    except Exception:
+        continue
         except:
             continue
     return pd.DataFrame(data)
