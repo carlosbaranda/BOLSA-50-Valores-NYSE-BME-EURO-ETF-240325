@@ -40,6 +40,7 @@ def obtener_datos(tickers):
                     "Nombre": info.get("shortName", ""),
                     "Sector": sector,
                     "Mercado": mercado,
+                    "PER": info.get("trailingPE", None),
                     "Cambio Día (%)": round(cambio_dia, 2),
                     "Cambio Semana (%)": round(cambio_semana, 2),
                     "Cambio YTD (%)": round(cambio_ytd, 2),
