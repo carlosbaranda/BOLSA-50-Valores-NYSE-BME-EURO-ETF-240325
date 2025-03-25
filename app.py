@@ -30,7 +30,7 @@ def obtener_datos(tickers):
             if len(hist) >= 200:
                 cambio_dia = (hist["Close"][-1] - hist["Open"][-1]) / hist["Open"][-1] * 100
                 cambio_semana = (hist["Close"][-1] - hist["Close"][-6]) / hist["Close"][-6] * 100
-                cierre_inicio_ano = hist[hist.index >= "2024-03-25"]["Close"]
+                cierre_inicio_ano = hist[hist.index >= "2025-01-01"]["Close"]
                 if len(cierre_inicio_ano) > 0:
                     cambio_ytd = (hist["Close"][-1] - cierre_inicio_ano[0]) / cierre_inicio_ano[0] * 100
                 else:
@@ -49,6 +49,7 @@ def obtener_datos(tickers):
                     "Cambio Día (%)": round(cambio_dia, 2),
                     "Cambio Semana (%)": round(cambio_semana, 2),
                     "Cambio Desde 1 Ene (%)": round(cambio_ytd, 2),
+                    "YTD (%)": round((hist["Close"][-1] - hist["Close"][-252]) / hist["Close"][-252] * 100, 2),
                     "YTD (%)": round(cambio_ytd, 2),
                     "Volumen Diario": int(vol_diario),
                     "Volumen Medio (50)": int(vol_media_50),
@@ -132,18 +133,26 @@ if seleccion:
 
 
 
-# Tabla adicional de resumen
-st.subheader("📊 Resumen: Top 5 ganadores y perdedores por YTD (%)")
+# --- Tabla resumen de ganadores y perdedores con filtro de mercado
+st.subheader("📊 Resumen Top 15 por YTD (%)")
 
-# Conversión segura a numérico
-df["YTD_valor"] = df["YTD (%)"].apply(lambda x: float(str(x).replace("📈", "").replace("📉", "").strip()) if isinstance(x, str) else x)
+mercado_resumen = st.selectbox("Filtrar resumen por mercado:", ["Todos"] + sorted(df["Mercado"].dropna().unique()), key="filtro_resumen_mercado")
+df_resumen = df.copy()
+sector_resumen = st.selectbox("Filtrar resumen por sector:", ["Todos"] + sorted(df["Sector"].dropna().unique()), key="filtro_resumen_sector")
+df_resumen["YTD_valor"] = df_resumen["YTD (%)"].apply(lambda x: float(str(x).replace("📈", "").replace("📉", "").strip()) if isinstance(x, str) else x)
+
+if mercado_resumen != "Todos":
+    df_resumen = df_resumen[df_resumen["Mercado"] == mercado_resumen]
+if sector_resumen != "Todos":
+    df_resumen = df_resumen[df_resumen["Sector"] == sector_resumen]
+    df_resumen = df_resumen[df_resumen["Mercado"] == mercado_resumen]
 
 col1, col2 = st.columns(2)
 
 with col1:
-    st.markdown("### 🟢 Top 5 Ganadores (YTD)")
-    st.dataframe(df.sort_values("YTD_valor", ascending=False).head(15)[["Ticker", "Nombre", "YTD (%)"]], use_container_width=True)
+    st.markdown("### 🟢 Top 15 Ganadores")
+    st.dataframe(df_resumen.sort_values("YTD_valor", ascending=False).head(15)[["Ticker", "Nombre", "YTD (%)"]], use_container_width=True)
 
 with col2:
-    st.markdown("### 🔴 Top 5 Perdedores (YTD)")
-    st.dataframe(df.sort_values("YTD_valor", ascending=True).head(15)[["Ticker", "Nombre", "YTD (%)"]], use_container_width=True)
+    st.markdown("### 🔴 Top 15 Perdedores")
+    st.dataframe(df_resumen.sort_values("YTD_valor", ascending=True).head(15)[["Ticker", "Nombre", "YTD (%)"]], use_container_width=True)
