@@ -42,6 +42,7 @@ def obtener_datos(tickers):
                     "Sector": sector,
                     "Mercado": mercado,
                     "PER": round(info.get("trailingPE", 0), 2) if info.get("trailingPE") is not None else None,
+                    "Último Precio": round(hist["Close"][-1], 2),
                     "Cambio Día (%)": round(cambio_dia, 2),
                     "Cambio Semana (%)": round(cambio_semana, 2),
                     "Cambio YTD (%)": round(cambio_ytd, 2),
@@ -56,11 +57,12 @@ def obtener_datos(tickers):
 
 df = obtener_datos(tickers)
 
-# Añadir iconos para subidas y bajadas
+# Añadir iconos y orden
 for col in ["Cambio Día (%)", "Cambio Semana (%)", "Cambio YTD (%)"]:
-    df[col] = df[col].apply(lambda x: f"📈 {x}" if x > 3 else f"📉 {x}" if x < -3 else f"{x}")
+    def extraer_numero(valor):
+        return float(str(valor).replace("📈", "").replace("📉", "").strip())
+    df[col] = df[col].apply(lambda x: f"📈 {x}" if extraer_numero(x) > 3 else f"📉 {x}" if extraer_numero(x) < -3 else f"{x}")
 
-# Orden por subida diaria
 df = df.sort_values("Cambio Día (%)", ascending=False)
 
 # Filtro por mercado
@@ -68,11 +70,13 @@ mercado_sel = st.selectbox("Filtrar por mercado", ["Todos"] + sorted(df["Mercado
 if mercado_sel != "Todos":
     df = df[df["Mercado"] == mercado_sel]
 
+# Estilo condicional
 def resaltar_cambios(val):
-    if isinstance(val, (int, float)):
-        if val > 3:
+    if isinstance(val, str) and val.replace("📈", "").replace("📉", "").strip().replace('.', '', 1).replace('-', '', 1).isdigit():
+        num = float(val.replace("📈", "").replace("📉", "").strip())
+        if num > 3:
             return 'color: green; font-weight: bold'
-        elif val < -3:
+        elif num < -3:
             return 'color: red; font-weight: bold'
     return ''
 
@@ -108,7 +112,7 @@ if seleccion:
     hist_2y["Media 12"].plot(ax=ax2, label="Media 12", color="orange")
     hist_2y["Media 50"].plot(ax=ax2, label="Media 50", color="blue")
     hist_2y["Media 200"].plot(ax=ax2, label="Media 200", color="green")
-    ax2.set_title(f"Histórico 2 años: {seleccion}")
+    ax2.set_title(f"Precio y medias móviles 2 años: {seleccion}")
     ax2.set_ylabel("Precio")
     ax2.legend()
     st.pyplot(fig2)
