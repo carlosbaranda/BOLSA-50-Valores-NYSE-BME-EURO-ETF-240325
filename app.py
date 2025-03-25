@@ -57,18 +57,7 @@ def obtener_datos(tickers):
 df = obtener_datos(tickers)
 
 
-# Filtro por mercado
-mercado_sel = st.selectbox("Filtrar por mercado", ["Todos"] + sorted(df["Mercado"].unique()))
-if mercado_sel != "Todos":
-    df = df[df["Mercado"] == mercado_sel]
-
-# Filtro por sector
-sectores = df["Sector"].dropna().unique()
-sector_sel = st.selectbox("Filtrar por sector", ["Todos"] + sorted(sectores))
-if sector_sel != "Todos":
-    df = df[df["Sector"] == sector_sel]
-
-# Añadir iconos de cambio
+# Orden y estilo visual
 def extraer_num(valor):
     try:
         return float(str(valor).replace("📈", "").replace("📉", "").strip())
@@ -78,8 +67,19 @@ def extraer_num(valor):
 for col in ["Cambio Día (%)", "Cambio Semana (%)", "Cambio YTD (%)"]:
     df[col] = [f"📈 {v}" if extraer_num(v) > 3 else f"📉 {v}" if extraer_num(v) < -3 else f"{v}" for v in df[col]]
 
-# Aplicar colores
-def resaltar_cambios(val):
+df = df.sort_values("Cambio Día (%)", ascending=False)
+
+# Filtros
+mercado_sel = st.selectbox("Selecciona un mercado:", ["Todos"] + sorted(df["Mercado"].unique()))
+if mercado_sel != "Todos":
+    df = df[df["Mercado"] == mercado_sel]
+
+sector_sel = st.selectbox("Selecciona un sector:", ["Todos"] + sorted(df["Sector"].dropna().unique()))
+if sector_sel != "Todos":
+    df = df[df["Sector"] == sector_sel]
+
+# Estilo condicional
+def resaltar(val):
     try:
         num = float(str(val).replace("📈", "").replace("📉", "").strip())
         if num > 3:
@@ -90,11 +90,11 @@ def resaltar_cambios(val):
         return ''
     return ''
 
-st.dataframe(df.style.applymap(resaltar_cambios, subset=["Cambio Día (%)", "Cambio Semana (%)", "Cambio YTD (%)"]), use_container_width=True)
+st.dataframe(df.style.applymap(resaltar, subset=["Cambio Día (%)", "Cambio Semana (%)", "Cambio YTD (%)"]), use_container_width=True)
 
-# Gráfico por valor
+# Gráfico de valor
 st.subheader("📈 Gráfico del valor con medias móviles")
-seleccion = st.selectbox("Selecciona un ticker:", df["Ticker"])
+seleccion = st.selectbox("Selecciona un ticker:", df["Ticker"].unique())
 if seleccion:
     hist = yf.Ticker(seleccion).history(period="1y")
     hist["Media 12"] = hist["Close"].rolling(12).mean()
@@ -106,24 +106,22 @@ if seleccion:
     hist["Media 12"].plot(ax=ax, label="Media 12", color="orange")
     hist["Media 50"].plot(ax=ax, label="Media 50", color="blue")
     hist["Media 200"].plot(ax=ax, label="Media 200", color="green")
-    ax.set_title(f"Precio y medias móviles: {{seleccion}}")
-    ax.set_ylabel("Precio")
+    ax.set_title(f"Precio y medias móviles: {seleccion}")
     ax.legend()
     st.pyplot(fig)
 
-    st.subheader("📈 Gráfico histórico (2 años)")
-    hist_2y = yf.Ticker(seleccion).history(period="2y")
-    hist_2y["Media 12"] = hist_2y["Close"].rolling(12).mean()
-    hist_2y["Media 50"] = hist_2y["Close"].rolling(50).mean()
-    hist_2y["Media 200"] = hist_2y["Close"].rolling(200).mean()
+    st.subheader("📈 Histórico 2 años")
+    hist2 = yf.Ticker(seleccion).history(period="2y")
+    hist2["Media 12"] = hist2["Close"].rolling(12).mean()
+    hist2["Media 50"] = hist2["Close"].rolling(50).mean()
+    hist2["Media 200"] = hist2["Close"].rolling(200).mean()
 
     fig2, ax2 = plt.subplots(figsize=(10, 5))
-    hist_2y["Close"].plot(ax=ax2, label="Cierre", color="black")
-    hist_2y["Media 12"].plot(ax=ax2, label="Media 12", color="orange")
-    hist_2y["Media 50"].plot(ax=ax2, label="Media 50", color="blue")
-    hist_2y["Media 200"].plot(ax=ax2, label="Media 200", color="green")
-    ax2.set_title(f"Precio y medias móviles 2 años: {{seleccion}}")
-    ax2.set_ylabel("Precio")
+    hist2["Close"].plot(ax=ax2, label="Cierre", color="black")
+    hist2["Media 12"].plot(ax=ax2, label="Media 12", color="orange")
+    hist2["Media 50"].plot(ax=ax2, label="Media 50", color="blue")
+    hist2["Media 200"].plot(ax=ax2, label="Media 200", color="green")
+    ax2.set_title(f"Medias móviles 2 años: {seleccion}")
     ax2.legend()
     st.pyplot(fig2)
 
