@@ -4,10 +4,10 @@ import yfinance as yf
 import pandas as pd
 import matplotlib.pyplot as plt
 
-st.set_page_config(page_title="Modelo Bolsa - 200 Valores", layout="wide")
-st.title("📊 Modelo de Bolsa - 50 valores por mercado")
+st.set_page_config(page_title="Modelo Bolsa - Multimercado", layout="wide")
+st.title("📊 Valores de NYSE, IBEX 35 (incluye INDRA), EuroStoxx y ETFs")
 
-tickers = ['AAPL', 'MSFT', 'GOOGL', 'AMZN', 'TSLA', 'META', 'NVDA', 'JPM', 'WMT', 'UNH', 'KO', 'PEP', 'V', 'BAC', 'HD', 'DIS', 'MA', 'PYPL', 'INTC', 'IBM', 'CSCO', 'ORCL', 'NFLX', 'T', 'CVX', 'PFE', 'XOM', 'C', 'MCD', 'BA', 'ABT', 'CRM', 'MRK', 'QCOM', 'NKE', 'LOW', 'GE', 'TMO', 'AXP', 'COST', 'TXN', 'NEE', 'UPS', 'LIN', 'MDT', 'AMGN', 'GILD', 'SBUX', 'MO', 'DUK', 'ACS.MC', 'AENA.MC', 'AMS.MC', 'ANA.MC', 'BBVA.MC', 'CABK.MC', 'CLNX.MC', 'COL.MC', 'ENG.MC', 'FER.MC', 'GRF.MC', 'IBE.MC', 'IAG.MC', 'ITX.MC', 'LOG.MC', 'MAP.MC', 'MEL.MC', 'MRL.MC', 'MTB.MC', 'NHH.MC', 'NTGY.MC', 'PHM.MC', 'RED.MC', 'REP.MC', 'ROVI.MC', 'SAB.MC', 'SAN.MC', 'SGRE.MC', 'SLR.MC', 'SNT.MC', 'TEF.MC', 'TRE.MC', 'UNI.MC', 'VIS.MC', 'XME.MC', 'ZEL.MC', 'ALM.MC', 'R4.MC', 'BIO.MC', 'EDR.MC', 'ENC.MC', 'FCC.MC', 'ECO.MC', 'TYT.MC', 'QRT.MC', 'VID.MC', 'BKT.MC', 'ZOT.MC', 'DIA.MC', 'ENAG.MC', 'AIR.PA', 'ADS.DE', 'ALV.DE', 'BN.PA', 'ENEL.MI', 'ENGI.PA', 'OR.PA', 'SAP.DE', 'SIE.DE', 'SU.PA', 'TTE.PA', 'VOW3.DE', 'DTE.DE', 'DPW.DE', 'BAS.DE', 'BAYN.DE', 'BMW.DE', 'CRH.L', 'DAI.DE', 'KER.PA', 'LVMH.PA', 'MC.PA', 'MT.AS', 'PHIA.AS', 'RWE.DE', 'SGO.PA', 'URW.AS', 'ZAL.DE', 'ATCO-A.ST', 'HEIA.AS', 'IFX.DE', 'LIN.DE', 'UCG.MI', 'STLA.MI', 'ENI.MI', 'ISP.MI', 'BNP.PA', 'ALFA.ST', 'FRE.DE', 'ABN.AS', 'FER.MC', 'AMS.MC', 'SDF.DE', 'MUV2.DE', 'ACA.PA', 'MBG.DE', 'MTX.DE', 'SKA-B.ST', 'VWS.CO', 'SGSN.SW', 'SPY', 'QQQ', 'DIA', 'VTI', 'IWM', 'EFA', 'EEM', 'VNQ', 'LQD', 'HYG', 'XLF', 'XLK', 'XLE', 'XLY', 'XLV', 'XLI', 'XLB', 'XLC', 'XLRE', 'ARKK', 'ARKW', 'ARKF', 'ARKG', 'ARKQ', 'ARKX', 'SOXX', 'SMH', 'IBB', 'VHT', 'IYZ', 'XRT', 'XHB', 'XME', 'ITA', 'IYT', 'MTUM', 'USMV', 'XOP', 'XBI', 'XTL', 'RWR', 'PSJ', 'KRE', 'FDN', 'VOO', 'SCHD', 'BND', 'TLT', 'TIP', 'SHY']
+tickers = ['AAPL', 'MSFT', 'GOOGL', 'AMZN', 'TSLA', 'META', 'NVDA', 'JPM', 'WMT', 'UNH', 'KO', 'PEP', 'V', 'BAC', 'HD', 'DIS', 'MA', 'PYPL', 'INTC', 'IBM', 'CSCO', 'ORCL', 'NFLX', 'T', 'CVX', 'PFE', 'XOM', 'C', 'MCD', 'BA', 'ABT', 'CRM', 'MRK', 'QCOM', 'NKE', 'LOW', 'GE', 'TMO', 'AXP', 'COST', 'TXN', 'NEE', 'UPS', 'LIN', 'MDT', 'AMGN', 'GILD', 'SBUX', 'MO', 'DUK', 'ACS.MC', 'AENA.MC', 'AMS.MC', 'ANA.MC', 'BBVA.MC', 'CABK.MC', 'CLNX.MC', 'COL.MC', 'ENG.MC', 'FER.MC', 'GRF.MC', 'IBE.MC', 'IAG.MC', 'ITX.MC', 'LOG.MC', 'MAP.MC', 'MEL.MC', 'MRL.MC', 'MTB.MC', 'NHH.MC', 'NTGY.MC', 'PHM.MC', 'RED.MC', 'REP.MC', 'ROVI.MC', 'SAB.MC', 'SAN.MC', 'SGRE.MC', 'SLR.MC', 'SNT.MC', 'TEF.MC', 'TRE.MC', 'UNI.MC', 'VIS.MC', 'XME.MC', 'ZEL.MC', 'IDR.MC', 'AIR.PA', 'ADS.DE', 'ALV.DE', 'BN.PA', 'ENEL.MI', 'ENGI.PA', 'OR.PA', 'SAP.DE', 'SIE.DE', 'SU.PA', 'TTE.PA', 'VOW3.DE', 'DTE.DE', 'DPW.DE', 'BAS.DE', 'BAYN.DE', 'BMW.DE', 'CRH.L', 'DAI.DE', 'KER.PA', 'LVMH.PA', 'MC.PA', 'MT.AS', 'PHIA.AS', 'RWE.DE', 'SGO.PA', 'URW.AS', 'ZAL.DE', 'ATCO-A.ST', 'HEIA.AS', 'IFX.DE', 'LIN.DE', 'UCG.MI', 'STLA.MI', 'ENI.MI', 'ISP.MI', 'BNP.PA', 'ALFA.ST', 'FRE.DE', 'ABN.AS', 'FER.MC', 'AMS.MC', 'SDF.DE', 'MUV2.DE', 'ACA.PA', 'MBG.DE', 'MTX.DE', 'SKA-B.ST', 'VWS.CO', 'SGSN.SW', 'SPY', 'QQQ', 'DIA', 'VTI', 'IWM', 'EFA', 'EEM', 'VNQ', 'LQD', 'HYG', 'XLF', 'XLK', 'XLE', 'XLY', 'XLV', 'XLI', 'XLB', 'XLC', 'XLRE', 'ARKK', 'ARKW', 'ARKF', 'ARKG', 'ARKQ', 'ARKX', 'SOXX', 'SMH', 'IBB', 'VHT', 'IYZ', 'XRT', 'XHB', 'XME', 'ITA', 'IYT', 'MTUM', 'USMV', 'XOP', 'XBI', 'XTL', 'RWR', 'PSJ', 'KRE', 'FDN', 'VOO', 'SCHD', 'BND', 'TLT', 'TIP', 'SHY']
 
 @st.cache_data(ttl=3600)
 def obtener_datos(tickers):
@@ -18,13 +18,12 @@ def obtener_datos(tickers):
             hist = stock.history(period="300d")
             info = stock.info
 
-            sector = info.get("sector", "")
             if ".MC" in ticker:
                 mercado = "España"
-            elif ticker.endswith((".PA", ".DE", ".MI", ".AS", ".ST", ".L", ".SW")):
-                mercado = "EuroStoxx"
             elif ticker in ['SPY', 'QQQ', 'DIA', 'VTI', 'IWM', 'EFA', 'EEM', 'VNQ', 'LQD', 'HYG', 'XLF', 'XLK', 'XLE', 'XLY', 'XLV', 'XLI', 'XLB', 'XLC', 'XLRE', 'ARKK', 'ARKW', 'ARKF', 'ARKG', 'ARKQ', 'ARKX', 'SOXX', 'SMH', 'IBB', 'VHT', 'IYZ', 'XRT', 'XHB', 'XME', 'ITA', 'IYT', 'MTUM', 'USMV', 'XOP', 'XBI', 'XTL', 'RWR', 'PSJ', 'KRE', 'FDN', 'VOO', 'SCHD', 'BND', 'TLT', 'TIP', 'SHY']:
                 mercado = "ETF"
+            elif ticker.endswith((".PA", ".DE", ".MI", ".AS", ".ST", ".L", ".SW")):
+                mercado = "EuroStoxx"
             else:
                 mercado = "NYSE"
 
@@ -39,9 +38,9 @@ def obtener_datos(tickers):
                 data.append({
                     "Ticker": ticker,
                     "Nombre": info.get("shortName", ""),
-                    "Sector": sector,
+                    "Sector": info.get("sector", ""),
                     "Mercado": mercado,
-                    "PER": round(info.get("trailingPE", 0), 2) if info.get("trailingPE") is not None else None,
+                    "PER": round(info.get("trailingPE", 0), 2) if info.get("trailingPE") else None,
                     "Último Precio": round(hist["Close"][-1], 2),
                     "Cambio Día (%)": round(cambio_dia, 2),
                     "Cambio Semana (%)": round(cambio_semana, 2),
@@ -57,62 +56,4 @@ def obtener_datos(tickers):
 
 df = obtener_datos(tickers)
 
-# Añadir iconos y orden
-for col in ["Cambio Día (%)", "Cambio Semana (%)", "Cambio YTD (%)"]:
-    def extraer_numero(valor):
-        return float(str(valor).replace("📈", "").replace("📉", "").strip())
-    df[col] = df[col].apply(lambda x: f"📈 {x}" if extraer_numero(x) > 3 else f"📉 {x}" if extraer_numero(x) < -3 else f"{x}")
-
-df = df.sort_values("Cambio Día (%)", ascending=False)
-
-# Filtro por mercado
-mercado_sel = st.selectbox("Filtrar por mercado", ["Todos"] + sorted(df["Mercado"].unique()))
-if mercado_sel != "Todos":
-    df = df[df["Mercado"] == mercado_sel]
-
-# Estilo condicional
-def resaltar_cambios(val):
-    if isinstance(val, str) and val.replace("📈", "").replace("📉", "").strip().replace('.', '', 1).replace('-', '', 1).isdigit():
-        num = float(val.replace("📈", "").replace("📉", "").strip())
-        if num > 3:
-            return 'color: green; font-weight: bold'
-        elif num < -3:
-            return 'color: red; font-weight: bold'
-    return ''
-
-st.dataframe(df.style.applymap(resaltar_cambios, subset=["Cambio Día (%)", "Cambio Semana (%)", "Cambio YTD (%)"]), use_container_width=True)
-
-# Gráfico por ticker
-st.subheader("📈 Gráfico del valor con medias móviles")
-seleccion = st.selectbox("Selecciona un ticker:", df["Ticker"])
-if seleccion:
-    hist = yf.Ticker(seleccion).history(period="1y")
-    hist["Media 12"] = hist["Close"].rolling(12).mean()
-    hist["Media 50"] = hist["Close"].rolling(50).mean()
-    hist["Media 200"] = hist["Close"].rolling(200).mean()
-
-    fig, ax = plt.subplots(figsize=(10, 5))
-    hist["Close"].plot(ax=ax, label="Cierre", color="black")
-    hist["Media 12"].plot(ax=ax, label="Media 12", color="orange")
-    hist["Media 50"].plot(ax=ax, label="Media 50", color="blue")
-    hist["Media 200"].plot(ax=ax, label="Media 200", color="green")
-    ax.set_title(f"Precio y medias móviles: {seleccion}")
-    ax.set_ylabel("Precio")
-    ax.legend()
-    st.pyplot(fig)
-
-    st.subheader("📈 Gráfico histórico (2 años)")
-    hist_2y = yf.Ticker(seleccion).history(period="2y")
-    hist_2y["Media 12"] = hist_2y["Close"].rolling(12).mean()
-    hist_2y["Media 50"] = hist_2y["Close"].rolling(50).mean()
-    hist_2y["Media 200"] = hist_2y["Close"].rolling(200).mean()
-
-    fig2, ax2 = plt.subplots(figsize=(10, 5))
-    hist_2y["Close"].plot(ax=ax2, label="Cierre", color="black")
-    hist_2y["Media 12"].plot(ax=ax2, label="Media 12", color="orange")
-    hist_2y["Media 50"].plot(ax=ax2, label="Media 50", color="blue")
-    hist_2y["Media 200"].plot(ax=ax2, label="Media 200", color="green")
-    ax2.set_title(f"Precio y medias móviles 2 años: {seleccion}")
-    ax2.set_ylabel("Precio")
-    ax2.legend()
-    st.pyplot(fig2)
+st.dataframe(df, use_container_width=True)
