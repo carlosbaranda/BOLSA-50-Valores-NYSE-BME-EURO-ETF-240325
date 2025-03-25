@@ -151,8 +151,8 @@ col1, col2 = st.columns(2)
 
 with col1:
     st.markdown("### 🟢 Top 15 Ganadores")
-    st.dataframe(df_resumen.sort_values("YTD_valor", ascending=False).head(15)[["Ticker", "Nombre", "YTD (%)"]], use_container_width=True)
+    st.dataframe(df_resumen.sort_values("YTD_valor", ascending=False).head(25)[["Ticker", "Nombre", "YTD (%)"]], use_container_width=True)
 
 with col2:
     st.markdown("### 🔴 Top 15 Perdedores")
-    st.dataframe(df_resumen.sort_values("YTD_valor", ascending=True).head(15)[["Ticker", "Nombre", "YTD (%)"]], use_container_width=True)
+    st.dataframe(df_resumen.sort_values("YTD_valor", ascending=True).head(25)[["Ticker", "Nombre", "YTD (%)"]], use_container_width=True)
