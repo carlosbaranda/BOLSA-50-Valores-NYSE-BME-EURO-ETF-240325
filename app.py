@@ -30,7 +30,7 @@ def obtener_datos(tickers):
             if len(hist) >= 200:
                 cambio_dia = (hist["Close"][-1] - hist["Open"][-1]) / hist["Open"][-1] * 100
                 cambio_semana = (hist["Close"][-1] - hist["Close"][-6]) / hist["Close"][-6] * 100
-                cierre_inicio_ano = hist[hist.index >= "2025-01-01"]["Close"]
+                cierre_inicio_ano = hist[hist.index >= "2024-03-25"]["Close"]
                 if len(cierre_inicio_ano) > 0:
                     cambio_ytd = (hist["Close"][-1] - cierre_inicio_ano[0]) / cierre_inicio_ano[0] * 100
                 else:
@@ -130,3 +130,20 @@ if seleccion:
     ax2.legend()
     st.pyplot(fig2)
 
+
+
+# Tabla adicional de resumen
+st.subheader("📊 Resumen: Top 5 ganadores y perdedores por YTD (%)")
+
+# Conversión segura a numérico
+df["YTD_valor"] = df["YTD (%)"].apply(lambda x: float(str(x).replace("📈", "").replace("📉", "").strip()) if isinstance(x, str) else x)
+
+col1, col2 = st.columns(2)
+
+with col1:
+    st.markdown("### 🟢 Top 5 Ganadores (YTD)")
+    st.dataframe(df.sort_values("YTD_valor", ascending=False).head(15)[["Ticker", "Nombre", "YTD (%)"]], use_container_width=True)
+
+with col2:
+    st.markdown("### 🔴 Top 5 Perdedores (YTD)")
+    st.dataframe(df.sort_values("YTD_valor", ascending=True).head(15)[["Ticker", "Nombre", "YTD (%)"]], use_container_width=True)
