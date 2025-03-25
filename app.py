@@ -49,6 +49,7 @@ def obtener_datos(tickers):
                     "Cambio Día (%)": round(cambio_dia, 2),
                     "Cambio Semana (%)": round(cambio_semana, 2),
                     "Cambio Desde 1 Ene (%)": round(cambio_ytd, 2),
+                    "YTD (%)": round(cambio_ytd, 2),
                     "Volumen Diario": int(vol_diario),
                     "Volumen Medio (50)": int(vol_media_50),
                     "Diferencia Volumen (%)": round(dif_vol, 2)
@@ -66,7 +67,7 @@ def extraer_num(valor):
     except:
         return 0
 
-for col in ["Cambio Día (%)", "Cambio Semana (%)", "Cambio Desde 1 Ene (%)"]:
+for col in ["Cambio Día (%)", "Cambio Semana (%)", "Cambio Desde 1 Ene (%)", "YTD (%)"]:
     df[col] = [f"📈 {v}" if extraer_num(v) > 3 else f"📉 {v}" if extraer_num(v) < -3 else f"{v}" for v in df[col]]
 
 df = df.sort_values("Cambio Día (%)", ascending=False)
@@ -92,7 +93,7 @@ def resaltar(val):
         return ''
     return ''
 
-st.dataframe(df.style.applymap(resaltar, subset=["Cambio Día (%)", "Cambio Semana (%)", "Cambio Desde 1 Ene (%)"]), use_container_width=True)
+st.dataframe(df.style.applymap(resaltar, subset=["Cambio Día (%)", "Cambio Semana (%)", "Cambio Desde 1 Ene (%)", "YTD (%)"]), use_container_width=True)
 
 # Gráfico del valor con medias móviles
 st.subheader("📈 Gráfico del valor seleccionado")
