@@ -98,7 +98,7 @@ st.dataframe(df.style.applymap(resaltar, subset=["Cambio Día (%)", "Cambio Sema
 
 # --- Tabla resumen de ganadores y perdedores con filtro de mercado
 
-st.subheader("📊 Resumen Top 15 por YTD (%)")
+st.subheader("📊 Resumen Top 25 por YTD%")
 
 mercado_resumen = st.selectbox("Filtrar resumen por mercado:", ["Todos"] + sorted(df["Mercado"].dropna().unique()), key="filtro_resumen_mercado")
 df_resumen = df.copy()
